@@ -144,6 +144,20 @@ void copiarArray(int **a, int* b, int elementos){
     }
 }
 
+/*Función que se encarga de imprimir todas las combinaciones que se generan*/
+void printCurrent(int* arr, int ctidad_utilidades){
+    #ifdef DEBUG
+    printf(">Combinacion: \n");
+    for(int i = 0; i<ctidad_utilidades; i++){
+        printf("Utilidad: %d , Precio: %d \n", data.utilidades[i]*arr[i], data.precios[i]*arr[i]);
+        
+    }
+    printf("Presione enter para continuar...\n");
+    while(getchar()!='\n');
+    #endif
+}
+
+
 /*Función que se encarga de generar un arreglo bidimensional con todas las combinaciones de 0 y 1
 posibles dada una cantidad a ser combinada (genera una tabla de números binarios de n bits de 0 a n-1)
 Entrada: Cantidad de números bits, cantidad de números bits, arreglo de tamaño n, index=0, arreglo bidimensional
@@ -151,6 +165,7 @@ donde se guarda la tabla*/
 void recursivo(int n, int a,  int* arr, int index, int** mochilas){
     if(n == 0){
         copiarArray(mochilas, arr,a);
+        printCurrent(arr,a);
         return;
     }
     if( n == a){
@@ -166,20 +181,6 @@ void recursivo(int n, int a,  int* arr, int index, int** mochilas){
         }
     }
     
-}
-
-/*Función que se encarga de imprimir todas las combinaciones que se generan*/
-void printCurrent(int** combinacion, int* utilidades, int ctidad_utilidades ){
-    #ifdef DEBUG
-    for(int i = 0; i<potencia(2,ctidad_utilidades); i++){
-        printf("Combinacion: ");
-        for(int j = 0; j<ctidad_utilidades; j++){
-            printf("%d ", combinacion[i][j]*utilidades[j]);
-        }
-        printf("Utilidad: %d , Precio: %d \n", infoCombinaciones[i].utilidad, infoCombinaciones[i].total);
-        while(getchar()!='\n');
-    }
-    #endif
 }
 
 /*Función que se encarga de obtener los datos para cada combinación de inversiones
@@ -206,7 +207,7 @@ InfoCombinacion obtenerSolucion(int presupuesto, int ctidad_utilidades){
     int max = 0; 
     for(int i = 0; i < potencia(2,ctidad_utilidades); i++){
         if(infoCombinaciones[i].total<=presupuesto){
-            if(infoCombinaciones[i].utilidad > max){
+            if(infoCombinaciones[i].utilidad >= max){
                 solucion = infoCombinaciones[i];
                 max = infoCombinaciones[i].utilidad;
             }
@@ -240,7 +241,6 @@ int* bruteForce(int ctidad_utilidades,int presupuesto, int* utilidades, int* pre
     int arr[ctidad_utilidades];
     recursivo(ctidad_utilidades,ctidad_utilidades,arr,0,combinaciones);
     obtenerDatos(combinaciones, utilidades, precios, ctidad_utilidades);
-    printCurrent(combinaciones,utilidades,ctidad_utilidades);
     InfoCombinacion solucion = obtenerSolucion(presupuesto, ctidad_utilidades);
     escribirSolucion(solucion,precios,combinaciones[solucion.indice],ctidad_utilidades);
 
