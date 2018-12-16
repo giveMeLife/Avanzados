@@ -4,6 +4,7 @@
 #define true 1
 #define false 0
 
+//Estructura para guardar matriz de adyacencias y dimensión de esta matriz o cantidad de nodos
 struct adjM{
     int n;
     int** matrix;
@@ -15,6 +16,9 @@ int* visitados;
 int* mejorRuta;
 int costo = 0;
 
+
+//Función que ingresa valores a la matriz de adyacencia 
+//Entrada: String con valores de la forma NodoX NodoY Distancia
 void asignarValor(char* str){
     char a[4];
     char b[4];
@@ -45,13 +49,15 @@ void asignarValor(char* str){
     matriz.matrix[aux2-1][aux1-1] = aux3;   
 }
 
+//Función que lee archivo de entrada con valores iniciales
+//Entrada: Nombre de archivo de texto
 void leerArchivo(char* nombre){
     FILE *fp;
     char *str = (char*)malloc(sizeof(char)*9);
     fp = fopen(nombre, "r");
     int i = 0;
     int j = 0;
-    while (fgets(str, 9, fp) != NULL){
+    while (fgets(str, 20, fp) != NULL){
         if( i == 0){
             matriz.n = atoi(str);
             matriz.matrix = (int**)malloc(sizeof(int*)*matriz.n);
@@ -67,6 +73,8 @@ void leerArchivo(char* nombre){
     fclose(fp);
 }
 
+//Función que agrega un elemento a un arreglo.
+//Entradas: Arreglo, valor entero.
 void agregar(int* visitados, int nodo){
     int i = 0;
     for(i ; i<matriz.n;i++){
@@ -77,6 +85,8 @@ void agregar(int* visitados, int nodo){
     }
 }
 
+//Función que indica si un nodo ha sido visitado o no.
+//Entrada: Arreglo con nodos (valores enteros), dimensión del arreglo, y nodo.
 int visitado(int* arreglo, int n, int nodo){
     int i = 0;
     for(i ; i<n; i++){
@@ -85,16 +95,10 @@ int visitado(int* arreglo, int n, int nodo){
         }
     }
     return false;
-
-}
-void imprimirArreglo(int* arreglo, int n){
-    int i = 0;
-    for(i;i<n;i++){
-        printf("%d ", arreglo[i]);
-    }
-    printf("\n");
 }
 
+//Función que indica si un arreglo está vacío o no
+//Entrada: Arreglo, dimensión del arreglo.
 int vacio(int* arreglo, int n){
     int a = 0;
     int i = 0;
@@ -111,6 +115,8 @@ int vacio(int* arreglo, int n){
     }
 }
 
+//Función que elimina un elemento de un arreglo
+//Entrada: Arreglo, dimensión del arreglo, elemento.
 void eliminar(int* matriz, int n, int elem){
     int i = 0;
     for(i ; i<n; i++){
@@ -121,6 +127,8 @@ void eliminar(int* matriz, int n, int elem){
     }
 }
 
+//Función que copia elementos de un arreglo en el arreglo mejorRuta
+//Entrada: arreglo a copiar, dimensión arreglo.
 void copiar( int* arreglo, int n){
     int i = 0;
     int j;
@@ -135,6 +143,8 @@ void copiar( int* arreglo, int n){
     }
 }
 
+//Función que rellena un arreglo con el valor -1
+//Entrada: arreglo, dimension del arreglo.
 void rellenarArreglo(int* arreglo, int n ){
     int i= 0;
     for(i ;i<n;i++){
@@ -142,7 +152,7 @@ void rellenarArreglo(int* arreglo, int n ){
     }
 }
 
-/*Función que se encarga de imprimir todas las combinaciones que se generan*/
+//Función que se encarga de mostrar el estado de un recorrido al agregar un nodo.
 void printCurrent(int* visitados, int distanciaActual, int nodo, int distanciaOptima){
     #ifdef DEBUG
     if(visitado(visitados, matriz.n, -1) == false){
@@ -177,7 +187,9 @@ void printCurrent(int* visitados, int distanciaActual, int nodo, int distanciaOp
 }
 
 
-
+//Función que se encarga de realizar un recorrido mediante backtracking para encontrar
+//el camino mínimo.
+//Entrada: Arreglo con nodos visitados, nodo en el que se está, distancia actual, nivel del recorrido
 void backtracking(int* visitados, int nodo, int distanciaActual, int nivel){
     if(nivel == matriz.n){
         costo = distanciaActual;    
@@ -210,24 +222,17 @@ void backtracking(int* visitados, int nodo, int distanciaActual, int nivel){
 
 }
 
-
-void imprimirMatriz(){
-    for(int i = 0; i<matriz.n;i++){
-        for(int j = 0; j<matriz.n;j++){
-            printf("%d ", matriz.matrix[i][j]);
-        }
-        printf("\n");
-    }
-}
-
+//Función que se encarga de generar el archivo de salida con el resultado
 void archivoSalida(){
     FILE *fp;
     fp = fopen("Salida.out", "w");
     fprintf(fp,"%d\n", costo);
+    fprintf(fp,"0-");
     int i = 0;
     for(i; i<matriz.n;i++){
-        fprintf(fp,"%d ",mejorRuta[i]+1);
+        fprintf(fp,"%d-",mejorRuta[i]+1);
     }
+    fprintf(fp,"0");
     fclose(fp);
 
 }
@@ -242,6 +247,5 @@ int main(){
     rellenarArreglo(visitados, matriz.n);
     mejorRuta = (int*)malloc(sizeof(int)*matriz.n);
     backtracking(visitados, 0, 0,0);
-    imprimirArreglo(mejorRuta,matriz.n);
     archivoSalida();
 }
