@@ -46,7 +46,6 @@ void asignarValor(char* str){
 }
 
 void leerArchivo(char* nombre){
-    printf("%s\n",nombre);
     FILE *fp;
     char *str = (char*)malloc(sizeof(char)*9);
     fp = fopen(nombre, "r");
@@ -54,21 +53,18 @@ void leerArchivo(char* nombre){
     int j = 0;
     while (fgets(str, 9, fp) != NULL){
         if( i == 0){
-            printf("jaja\n");
             matriz.n = atoi(str);
-            printf("%d\n", matriz.n);
             matriz.matrix = (int**)malloc(sizeof(int*)*matriz.n);
             for(j = 0; j<matriz.n;j++){
                     matriz.matrix[j] = (int*)malloc(sizeof(int)*matriz.n);
             }
         }
         else{
-            asignarValor(str);
-            printf("asigne\n");    
+            asignarValor(str);  
         }
         i++;
-        
     }
+    fclose(fp);
 }
 
 void agregar(int* visitados, int nodo){
@@ -146,14 +142,46 @@ void rellenarArreglo(int* arreglo, int n ){
     }
 }
 
+/*Función que se encarga de imprimir todas las combinaciones que se generan*/
+void printCurrent(int* visitados, int distanciaActual, int nodo, int distanciaOptima){
+    #ifdef DEBUG
+    if(visitado(visitados, matriz.n, -1) == false){
+        printf("------------------------------------------\n");
+        printf("Nodo agregado: %d\n", nodo+1);
+        printf("Posible solución: ");
+        for(int i = 0; i<matriz.n; i++){
+            if(visitados[i]!=-1)
+                printf("%d ", visitados[i]+1);
+        }
+        printf("\n");
+        printf("Posible distancia óptima: %d\n", distanciaActual);
+        printf("Presione enter para continuar...");
+        while(getchar()!='\n');
+        printf("------------------------------------------\n");
+        return;    
+    }
+    printf("------------------------------------------\n");
+    printf("Nodo agregado: %d\n", nodo+1);
+    printf("Visitados: ");
+    for(int i = 0; i<matriz.n; i++){
+        if(visitados[i]!=-1)
+            printf("%d ", visitados[i]+1);
+    }
+    printf("\n");
+    printf("Distancia Actual: %d\n", distanciaActual);
+    printf("Distancia optima: %d\n", distanciaOptima);
+    printf("Presione enter para continuar...");
+    while(getchar()!='\n');
+    printf("------------------------------------------\n");
+    #endif
+}
+
+
+
 void backtracking(int* visitados, int nodo, int distanciaActual, int nivel){
     if(nivel == matriz.n){
-        costo = distanciaActual;
-        printf("Soy arreglo: ");
-        imprimirArreglo(visitados,matriz.n);
-        printf("Mi costo es: %d", costo);
+        costo = distanciaActual;    
         copiar(visitados, matriz.n);
-        printf("\n");
         return;
     }
     else{
@@ -161,19 +189,17 @@ void backtracking(int* visitados, int nodo, int distanciaActual, int nivel){
         for(int i = 0; i<matriz.n; i++){
             if(nivel == 0 && vacio(visitados, matriz.n)==true){
                 agregar(visitados,i);
-                printf("Soy el padre: %d \n",i);
                 int auxiliar = nivel + 1;
+                printCurrent(visitados,distanciaActual,i,costo);
                 backtracking(visitados, i, 0, auxiliar);
                 rellenarArreglo(visitados,matriz.n);
-                printf("desps de rellenar\n");
 
             }
             else if(nodo != i && visitado(visitados, matriz.n, i) == false){
                 if(distanciaActual + matriz.matrix[nodo][i] < costo){
-                    printf("Distancia actual: %d  Nodo: %d   Nivel: %d\n",distanciaActual,nodo,nivel);
                     agregar(visitados,i);    
-                    imprimirArreglo(visitados,matriz.n);
                     int auxiliar= nivel+1;
+                    printCurrent(visitados,distanciaActual + matriz.matrix[nodo][i],i,costo);
                     backtracking(visitados, i, distanciaActual + matriz.matrix[nodo][i], auxiliar );
                     eliminar(visitados,matriz.n,i);
                     
@@ -194,23 +220,28 @@ void imprimirMatriz(){
     }
 }
 
+void archivoSalida(){
+    FILE *fp;
+    fp = fopen("Salida.out", "w");
+    fprintf(fp,"%d\n", costo);
+    int i = 0;
+    for(i; i<matriz.n;i++){
+        fprintf(fp,"%d ",mejorRuta[i]+1);
+    }
+    fclose(fp);
+
+}
+
 
 int main(){
     char* nombre = malloc(sizeof(char)*20);
     printf("Ingrese nombre archivo de texto con datos iniciales: ");
     scanf("%s", nombre);
     leerArchivo(nombre);
-    printf("hola\n");
     visitados = (int*)malloc(sizeof(int)*matriz.n);
     rellenarArreglo(visitados, matriz.n);
-    printf("hola\n");
     mejorRuta = (int*)malloc(sizeof(int)*matriz.n);
-    imprimirMatriz();
     backtracking(visitados, 0, 0,0);
-    imprimirArreglo(visitados,matriz.n);
     imprimirArreglo(mejorRuta,matriz.n);
-    int a = 3;
-    int b = a;
-    a = 4;
-    printf("%d %d\n", a,b);
+    archivoSalida();
 }
