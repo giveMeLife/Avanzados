@@ -226,7 +226,7 @@ void backtracking(int* visitados, int nodo, int distanciaActual, int nivel){
 void archivoSalida(){
     FILE *fp;
     fp = fopen("Salida.out", "w");
-    fprintf(fp,"%d\n", costo);
+    fprintf(fp,"%d\n", costo+2);
     fprintf(fp,"0-");
     int i = 0;
     for(i; i<matriz.n;i++){
@@ -248,4 +248,7 @@ int main(){
     mejorRuta = (int*)malloc(sizeof(int)*matriz.n);
     backtracking(visitados, 0, 0,0);
     archivoSalida();
+    free(mejorRuta);
+    free(visitados);
+    return 0;
 }
