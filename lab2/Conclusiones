@@ -1,0 +1,19 @@
+Complejidad algoritmo goloso(int k):
+    t(n) = 2 + n(1 + n(8)) -> para peor caso
+    t(n) = 2 + n(1+ n(3)) -> para mejor caso
+    para ambos casos se tiene:    
+    ~O(n^2)
+
+
+Conclusiones: Se puede apreciar que aplicar goloso a una solución es una buena forma de obtener
+              una solución de manera eficiente, ya que en general como goloso va por un solo camino
+              generando soluciones (el óptimo local), se realiza generalmente una búsqueda o recorrido lineal.
+              Esto hace que los algoritmos goloso sean de orden de complejidad polinómica (como es en este caso).
+              Lo que si hay que tener en cuenta, es que la calidad de la solución que se entrega no es siempre la
+              óptima, y que en muchos casos depende del orden de los datos a analizar si esta se obtiene de manera
+              óptima o no. Ya que al buscar el óptimo local, no siempre asegura un óptimo global. Para este problema
+              en particular, para casos determinados si se escoge bien los pares de barriles, se pudo haber obtenido
+              una mayor cantidad de soluciones para cada problema. 
+
+              En resumen, goloso otorga una forma rápida de obtener soluciones que se adecúen a un problema,
+              pero en caso de que se busque eficacia y calidad en las soluciones, no es recomendado utilizarlo.
